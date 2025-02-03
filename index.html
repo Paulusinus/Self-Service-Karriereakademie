@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Buchungsoptionen</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 600px; margin: auto; }
+    .hidden { display: none; }
+  </style>
+  <script>
+    window.onload = function() {
+      // Lese den Query-Parameter "id" aus der URL
+      const params = new URLSearchParams(window.location.search);
+      const recordId = params.get('id');
+      if (recordId) {
+        // Setze den Wert in das versteckte Feld
+        document.getElementById('recordId').value = recordId;
+      } else {
+        document.body.innerHTML = '<p>Keine gültige Buchungs-ID gefunden.</p>';
+        return;
+      }
+      
+      // Zeige Änderungsoptionen, wenn "Buchung ändern" ausgewählt wird
+      document.querySelectorAll('input[name="action"]').forEach(radio => {
+        radio.addEventListener('change', function() {
+          const changeOptions = document.getElementById('changeOptions');
+          if (this.value === 'change') {
+            changeOptions.classList.remove('hidden');
+          } else {
+            changeOptions.classList.add('hidden');
+          }
+        });
+      });
+    };
+  </script>
+</head>
+<body>
+  <h1>Ihre Buchungsoptionen</h1>
+  <form id="bookingForm" action="https://hook.eu2.make.com/deinWebhookEndpoint" method="POST">
+    <!-- Verstecktes Feld für die Record ID -->
+    <input type="hidden" id="recordId" name="id" value="">
+    
+    <p>Was möchten Sie tun?</p>
+    <label>
+      <input type="radio" name="action" value="cancel" checked> Buchung stornieren
+    </label><br>
+    <label>
+      <input type="radio" name="action" value="change"> Buchung ändern
+    </label>
+    
+    <!-- Änderungsoptionen werden nur angezeigt, wenn "Buchung ändern" gewählt ist -->
+    <div id="changeOptions" class="hidden">
+      <p>Neue Zimmeroption wählen:</p>
+      <select name="newRoomType">
+        <option value="single">Einzelzimmer</option>
+        <option value="double">Doppelzimmer</option>
+      </select>
+      <!-- Weitere Felder können hier ergänzt werden, z. B. für die Auswahl eines neuen Zimmerpartners -->
+    </div>
+    
+    <br>
+    <button type="submit">Absenden</button>
+  </form>
+</body>
+</html>
